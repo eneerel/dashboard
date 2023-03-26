@@ -2,9 +2,7 @@ import { React, useState } from 'react';
 import axios from 'axios';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import { TextField } from '@mui/material';
+import { Modal, TextField, Typography } from '@mui/material';
 
 const style = {
   position: 'absolute',
@@ -16,42 +14,46 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 3,
 };
 
-export default function EditCategory({ getCategory, id, open, handleClose, title, description, categoryImg, rating }) {
-  const [changeTitle, setChangeTitle] = useState(title);
+export default function AddCategory({ open, handleClose }) {
+  const [changeTitle, setChangeTitle] = useState();
 
-  const [changeDesc, setChangeDesc] = useState(description);
+  const [changeDesc, setChangeDesc] = useState();
 
-  const [changeImg, setChangeImg] = useState(categoryImg);
+  const [changeCategoryImg, setChangeCategoryImg] = useState();
 
-  const [changeRating, setChangeRating] = useState(rating);
+  const [changeCategoryRating, setChangeCategoryRating] = useState();
 
-    const updateCategory = async (id) => {
-      console.log('NAME', title);
-      try {
-        const result = await axios.put(`http://localhost:8000/category/${id}`, {
-          title: changeTitle,
-          description: changeDesc,
-          categoryRating: changeRating,
-          categoryImg: changeImg,
-        });
-        getCategory();
-        handleClose();
-      } catch (err) {
-        console.log('err', err);
-      }
-    };
+  const AddCategory = (handleClose) => {
+    axios
+      .post(`http://localhost:8000/category`, {
+        title: changeTitle,
+        description: changeDesc,
+        categoryImg: changeCategoryImg,
+        categoryRating: changeCategoryRating,
+      })
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    handleClose();
+  };
 
   return (
     <div>
       <Modal keepMounted open={open} onClose={handleClose}>
-        <Box sx={style}>
+        <Box component="form" sx={style}>
+          <Typography>Add new category</Typography>
           <TextField
             fullWidth
             id="outlined-controlled"
             label="Title"
-            defaultValue={title}
             onChange={(e) => {
               setChangeTitle(e.target.value);
             }}
@@ -59,8 +61,7 @@ export default function EditCategory({ getCategory, id, open, handleClose, title
           <TextField
             fullWidth
             id="outlined-controlled"
-            label="Decription"
-            defaultValue={description}
+            label="Description"
             onChange={(e) => {
               setChangeDesc(e.target.value);
             }}
@@ -69,28 +70,26 @@ export default function EditCategory({ getCategory, id, open, handleClose, title
             fullWidth
             id="outlined-controlled"
             label="Image"
-            defaultValue={categoryImg}
             onChange={(e) => {
-              setChangeImg(e.target.value);
+              setChangeCategoryImg(e.target.value);
             }}
           />
           <TextField
             fullWidth
             id="outlined-controlled"
             label="Rating"
-            defaultValue={rating}
             onChange={(e) => {
-              setChangeRating(e.target.value);
+              setChangeCategoryRating(e.target.value);
             }}
           />
           <Button
-            variant="=contained"
+            variant="contained"
             color="primary"
             onClick={() => {
-              updateCategory(id);
+              AddCategory();
             }}
           >
-            Done
+            Add
           </Button>
         </Box>
       </Modal>

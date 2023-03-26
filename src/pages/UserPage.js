@@ -28,6 +28,7 @@ import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 import EditCategory from '../components/modal/updateModal';
+import AddCategory from "../components/modal/createModal"
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
@@ -80,7 +81,7 @@ export default function UserPage() {
 
   const [categories, setCategory] = useState([]);
 
-  // const [open, setOpen] = useState(null);
+  const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
 
@@ -196,7 +197,10 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Категори
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}
+            onClick={() => {
+              handleAddOpen ();
+            }}>
             Шинэ Категори Үүсгэх
           </Button>
         </Stack>
@@ -254,20 +258,21 @@ export default function UserPage() {
                               </Button>
                               <Button size="large" color="inherit" onClick={handleOpen}>
                                 <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+                    
                                 Edit
                               </Button>
                             </TableCell>
                           </TableRow>
                           <EditCategory
-                            open={editModal}
-                            handleClose={handleClose}
-                            id={_id}
-                            title={title}
-                            description={description}
-                            categoryImg={categoryImg}
-                            rating={categoryRating}
-                            getCategory={getCategory}
-                          />
+                                  open={editModal}
+                                  handleClose={handleClose}
+                                  id={_id}
+                                  title={title}
+                                  description={description}
+                                  categoryImg={categoryImg}
+                                  rating={categoryRating}
+                                  getCategory={getCategory}
+                                 />
                         </>
                       );
                     })}
@@ -317,6 +322,7 @@ export default function UserPage() {
           </Card>
         )}
       </Container>
+      <AddCategory open={addModal} handleClose={handleAddClose } />
     </>
   );
 }
