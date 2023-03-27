@@ -53,6 +53,7 @@ export default function EditCategory({ getCategory, id, open, handleClose, title
             label="Title"
             defaultValue={title}
             onChange={(e) => {
+              console.log("TEST",e.target.value)
               setChangeTitle(e.target.value);
             }}
           />

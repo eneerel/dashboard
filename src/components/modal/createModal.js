@@ -54,6 +54,7 @@ export default function AddCategory({ open, handleClose }) {
             fullWidth
             id="outlined-controlled"
             label="Title"
+            
             onChange={(e) => {
               setChangeTitle(e.target.value);
             }}

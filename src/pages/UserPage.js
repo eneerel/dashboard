@@ -99,7 +99,9 @@ export default function UserPage() {
 
   const [addModal, setAddModal] = useState(false);
 
-  const handleOpen = () => setEditModal(true);
+  const [clickButton, setClickButton]=useState([]);
+
+  const handleOpen = (row) => {setEditModal(true); console.log(row);setClickButton(row)};
 
   const handleClose = () => setEditModal(false);
 
@@ -256,7 +258,7 @@ export default function UserPage() {
                               <Button size="large" color="inherit">
                                 <Iconify icon={'eva:trash-fill'} sx={{ mr: 2 }} onClick={() => delCategory(_id)} />
                               </Button>
-                              <Button size="large" color="inherit" onClick={handleOpen}>
+                              <Button size="large" color="inherit" onClick={()=>handleOpen(row)}>
                                 <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
                     
                                 Edit
@@ -264,14 +266,16 @@ export default function UserPage() {
                             </TableCell>
                           </TableRow>
                           <EditCategory
+                                
                                   open={editModal}
                                   handleClose={handleClose}
-                                  id={_id}
-                                  title={title}
-                                  description={description}
-                                  categoryImg={categoryImg}
-                                  rating={categoryRating}
+                                  id={clickButton._id}
+                                  title={clickButton.title}
+                                  description={clickButton.description}
+                                  categoryImg={clickButton.categoryImg}
+                                  rating={clickButton.categoryRating}
                                   getCategory={getCategory}
+                                  
                                  />
                         </>
                       );
