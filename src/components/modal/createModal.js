@@ -19,42 +19,39 @@ const style = {
   gap: 3,
 };
 
-export default function AddCategory({ open, handleClose }) {
-  const [changeTitle, setChangeTitle] = useState();
+export default function AddCategory({ open, handleAddClose, render, setRender }) {
+  const [title, setChangeTitle] = useState();
 
-  const [changeDesc, setChangeDesc] = useState();
+  const [description, setChangeDesc] = useState();
 
-  const [changeCategoryImg, setChangeCategoryImg] = useState();
+  const [categoryImg, setChangeCategoryImg] = useState();
 
-  const [changeCategoryRating, setChangeCategoryRating] = useState();
+  const [categoryRating, setChangeCategoryRating] = useState();
 
-  const AddCategory = (handleClose) => {
-    axios
-      .post(`http://localhost:8000/category`, {
-        title: changeTitle,
-        description: changeDesc,
-        categoryImg: changeCategoryImg,
-        categoryRating: changeCategoryRating,
-      })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
+  const AddCategory = async () => {
+    try {
+      await axios.post('http://localhost:8000/category', {
+        title,
+        description,
+        categoryImg,
+        categoryRating,
       });
-    handleClose();
+    } catch (err) {
+      console.log('err', err);
+    }
+    setRender();
+    handleAddClose();
   };
 
   return (
     <div>
-      <Modal keepMounted open={open} onClose={handleClose}>
+      <Modal keepMounted open={open} onClose={handleAddClose}>
         <Box component="form" sx={style}>
           <Typography>Add new category</Typography>
           <TextField
             fullWidth
             id="outlined-controlled"
             label="Title"
-            
             onChange={(e) => {
               setChangeTitle(e.target.value);
             }}
@@ -83,13 +80,7 @@ export default function AddCategory({ open, handleClose }) {
               setChangeCategoryRating(e.target.value);
             }}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              AddCategory();
-            }}
-          >
+          <Button variant="contained" color="primary" onClick={AddCategory}>
             Add
           </Button>
         </Box>

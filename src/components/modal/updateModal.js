@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useEffect, useState } from 'react';
 import axios from 'axios';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -11,37 +11,24 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 500,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 };
 
-export default function EditCategory({ getCategory, id, open, handleClose, title, description, categoryImg, rating }) {
-  const [changeTitle, setChangeTitle] = useState(title);
-
-  const [changeDesc, setChangeDesc] = useState(description);
-
-  const [changeImg, setChangeImg] = useState(categoryImg);
-
-  const [changeRating, setChangeRating] = useState(rating);
-
-    const updateCategory = async (id) => {
-      console.log('NAME', title);
-      try {
-        const result = await axios.put(`http://localhost:8000/category/${id}`, {
-          title: changeTitle,
-          description: changeDesc,
-          categoryRating: changeRating,
-          categoryImg: changeImg,
-        });
-        getCategory();
-        handleClose();
-      } catch (err) {
-        console.log('err', err);
-      }
-    };
+export default function EditCategory({ render, setRender, category, setCategory, open, handleClose }) {
+  const updateCategory = async () => {
+    try {
+      const result = await axios.put(`http://localhost:8000/category/${category._id}`, category);
+      // getCategory();
+      setRender(!render);
+      handleClose();
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
 
   return (
     <div>
@@ -50,45 +37,50 @@ export default function EditCategory({ getCategory, id, open, handleClose, title
           <TextField
             fullWidth
             id="outlined-controlled"
-            label="Title"
-            defaultValue={title}
+            label="Нэр"
+            name="title"
+            value={category.title}
             onChange={(e) => {
-              console.log("TEST",e.target.value)
-              setChangeTitle(e.target.value);
+              console.log('TEST', e.target.name);
+              console.log('TEST', e.target.value);
+              setCategory({ ...category, [e.target.name]: e.target.value });
             }}
           />
           <TextField
             fullWidth
             id="outlined-controlled"
-            label="Decription"
-            defaultValue={description}
+            label="decription"
+            name="description"
+            value={category.description}
             onChange={(e) => {
-              setChangeDesc(e.target.value);
+              setCategory({ ...category, [e.target.name]: e.target.value });
             }}
           />
           <TextField
             fullWidth
             id="outlined-controlled"
-            label="Image"
-            defaultValue={categoryImg}
+            label="categeryImg"
+            name="categoryImg"
+            value={category.categoryImg}
             onChange={(e) => {
-              setChangeImg(e.target.value);
+              setCategory({ ...category, [e.target.name]: e.target.value });
             }}
           />
           <TextField
             fullWidth
             id="outlined-controlled"
-            label="Rating"
-            defaultValue={rating}
+            label="Үнэлгээ"
+            name="categoryRating"
+            value={category.categoryRating}
             onChange={(e) => {
-              setChangeRating(e.target.value);
+              setCategory({ ...category, [e.target.name]: e.target.value });
             }}
           />
           <Button
             variant="=contained"
             color="primary"
             onClick={() => {
-              updateCategory(id);
+              updateCategory();
             }}
           >
             Done

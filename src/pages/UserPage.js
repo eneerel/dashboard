@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
+import { filter, set } from 'lodash';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 // @mui
@@ -28,7 +27,7 @@ import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 import EditCategory from '../components/modal/updateModal';
-import AddCategory from "../components/modal/createModal"
+import AddCategory from '../components/modal/createModal';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
@@ -79,9 +78,10 @@ function applySortFilter(array, comparator, query) {
 export default function UserPage() {
   const [fileteredCategory, setFilteredCategory] = useState([]);
 
-  const [categories, setCategory] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-  const [open, setOpen] = useState(null);
+  const [category, setCategory] = useState({});
+  const [render, setRender] = useState(false);
 
   const [page, setPage] = useState(0);
 
@@ -99,11 +99,14 @@ export default function UserPage() {
 
   const [addModal, setAddModal] = useState(false);
 
-  const [clickButton, setClickButton]=useState([]);
+  const handleOpen = (category) => {
+    setEditModal(true);
+    setCategory(category);
+  };
 
-  const handleOpen = (row) => {setEditModal(true); console.log(row);setClickButton(row)};
-
-  const handleClose = () => setEditModal(false);
+  const handleClose = () => {
+    setEditModal(false);
+  };
 
   const handleAddOpen = () => setAddModal(true);
 
@@ -163,7 +166,7 @@ export default function UserPage() {
     try {
       const result = await axios.get('http://localhost:8000/category');
       console.log('CAT IRLEE', result.data.category);
-      setCategory(result.data.category);
+      setCategories(result.data.category);
       setFilteredCategory(result.data.category);
     } catch (err) {
       console.log('Err', err);
@@ -172,7 +175,7 @@ export default function UserPage() {
 
   useEffect(() => {
     getCategory();
-  }, []);
+  }, [render]);
 
   const delCategory = async (_id) => {
     console.log('id', _id);
@@ -199,10 +202,14 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Категори
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}
+
+          <Button
+            variant="contained"
+            startIcon={<Iconify icon="eva:plus-fill" />}
             onClick={() => {
-              handleAddOpen ();
-            }}>
+              handleAddOpen();
+            }}
+          >
             Шинэ Категори Үүсгэх
           </Button>
         </Stack>
@@ -210,7 +217,6 @@ export default function UserPage() {
         {categories.length > 0 && (
           <Card>
             <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
-
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800 }}>
                 <Table>
@@ -230,56 +236,48 @@ export default function UserPage() {
 
                       // selected={selectedUser}
                       return (
-                        <>
-                          <TableRow hover key={_id} tabIndex={-1} role="checkbox">
-                            <TableCell padding="checkbox">
-                              <Checkbox checked={false} onChange={(event) => handleClick(event, title)} />
-                            </TableCell>
+                        <TableRow hover key={_id} tabIndex={-1} role="checkbox">
+                          <TableCell padding="checkbox">
+                            <Checkbox checked={false} onChange={(event) => handleClick(event, title)} />
+                          </TableCell>
 
-                            <TableCell component="th" scope="row" padding="none">
-                              <Stack direction="row" alignItems="center" spacing={2}>
-                                <Avatar alt={title} src={categoryImg} />
-                                <Typography variant="subtitle2" noWrap>
-                                  {title}
-                                </Typography>
-                              </Stack>
-                            </TableCell>
+                          <TableCell component="th" scope="row" padding="none">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              <Avatar alt={title} src={categoryImg} />
+                              <Typography variant="subtitle2" noWrap>
+                                {title}
+                              </Typography>
+                            </Stack>
+                          </TableCell>
 
-                            <TableCell align="left">{description}</TableCell>
+                          <TableCell align="left">{description}</TableCell>
 
-                            <TableCell align="left">url</TableCell>
+                          <TableCell align="left">url</TableCell>
 
-                            <TableCell align="left">
-                              {/* <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label> */}
-                              {categoryRating}
-                            </TableCell>
+                          <TableCell align="left">
+                            {/* <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label> */}
+                            {categoryRating}
+                          </TableCell>
 
-                            <TableCell align="right">
-                              <Button size="large" color="inherit">
-                                <Iconify icon={'eva:trash-fill'} sx={{ mr: 2 }} onClick={() => delCategory(_id)} />
-                              </Button>
-                              <Button size="large" color="inherit" onClick={()=>handleOpen(row)}>
-                                <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    
-                                Edit
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                          <EditCategory
-                                
-                                  open={editModal}
-                                  handleClose={handleClose}
-                                  id={clickButton._id}
-                                  title={clickButton.title}
-                                  description={clickButton.description}
-                                  categoryImg={clickButton.categoryImg}
-                                  rating={clickButton.categoryRating}
-                                  getCategory={getCategory}
-                                  
-                                 />
-                        </>
+                          <TableCell align="right">
+                            <Button size="large" color="inherit">
+                              <Iconify icon={'eva:trash-fill'} sx={{ mr: 2 }} onClick={() => delCategory(_id)} />
+                            </Button>
+                            <Button
+                              size="large"
+                              color="inherit"
+                              onClick={() => {
+                                handleOpen(row);
+                              }}
+                            >
+                              <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+                              Edit
+                            </Button>
+                          </TableCell>
+                        </TableRow>
                       );
                     })}
+
                     {emptyRows > 0 && (
                       <TableRow style={{ height: 53 * emptyRows }}>
                         <TableCell colSpan={6} />
@@ -314,6 +312,15 @@ export default function UserPage() {
               </TableContainer>
             </Scrollbar>
 
+            <EditCategory
+              open={editModal}
+              handleClose={handleClose}
+              category={category}
+              setCategory={setCategory}
+              render={render}
+              setRender={setRender}
+            />
+
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
@@ -323,10 +330,11 @@ export default function UserPage() {
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
+            {}
           </Card>
         )}
       </Container>
-      <AddCategory open={addModal} handleClose={handleAddClose } />
+      <AddCategory open={addModal} handleAddClose={handleAddClose} render={render} setRender={setRender} />
     </>
   );
 }
