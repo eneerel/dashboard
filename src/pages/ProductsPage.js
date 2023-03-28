@@ -1,66 +1,80 @@
 import { Helmet } from 'react-helmet-async';
-import { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
+import { useContext, useEffect, useState } from 'react';
+
 // @mui
-import { Container, Stack, Typography, Button } from '@mui/material';
+import { Container, Stack, Typography, Box, Button } from '@mui/material';
 // components
-import Iconify from '../components/iconify';
 import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../sections/@dashboard/products';
-
 // mock
-// import PRODUCTS from '../_mock/products';
-
+import PRODUCTS from '../_mock/products';
+import Iconify from '../components/iconify/Iconify';
+import { CategoryContext } from '../context/catContext';
 // ----------------------------------------------------------------------
 
 export default function ProductsPage() {
-  const [render, setRender] = useState(false);
+  
+  const [openFilter, setOpenFilter] = useState(false);
 
-  const [travels, setTravels] = useState([]);
+  //-----------------------------------------------------------------------------
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isNew, setIsNew] = useState();
 
-  const [filteredTravel, setFilteredTravel] = useState([]);
-
-  const getTravel = () => {
-    axios
-      .get('http://localhost:8000/travel')
-      .then((res) => {
-        console.log('irsen travel', res.data);
-        setTravels(res.data.Travels);
-        setFilteredTravel(res.data.Travels);
-      })
-      .catch((err) => {
-        console.log('Error', err);
-      });
+  const handleClose = () => {
+    setModalOpen(false);
   };
 
-  useEffect(() => {
-    getTravel();
-  }, [render]);
+  const handleOpenFilter = () => {
+    setOpenFilter(true);
+  };
+
+  const handleCloseFilter = () => {
+    setOpenFilter(false);
+  };
+
   return (
     <>
       <Helmet>
-        <title> Dashboard: Travel | Minimal UI </title>
+        <title> Dashboard: Products | Minimal UI </title>
       </Helmet>
 
       <Container>
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          Travels
-        </Typography>
-
-        <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
-          <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
+        <Box>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+            <Typography variant="h4" sx={{ mb: 5 }}>
+              Travel
+            </Typography>
             <Button
               variant="contained"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
-                console.log('first');
+                setModalOpen(true);
+                setIsNew(false);
               }}
             >
-              Шинэ Аялал Үүсгэх
+              New Travel
             </Button>
+          </Stack>
+        </Box>
+
+        <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
+          <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
+            <ProductFilterSidebar
+              openFilter={openFilter}
+              onOpenFilter={handleOpenFilter}
+              onCloseFilter={handleCloseFilter}
+            />
+            <ProductSort />
           </Stack>
         </Stack>
 
-        <ProductList filteredTravel={filteredTravel} />
+        <ProductList
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+          isNew={isNew}
+          setIsNew={setIsNew}
+          handleClose={handleClose}
+        />
+        <ProductCartWidget />
       </Container>
     </>
   );
