@@ -1,7 +1,25 @@
 import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
 // @mui
-import { Container, Stack, Typography } from '@mui/material';
+import {
+  Card,
+  Table,
+  Stack,
+  Paper,
+  Avatar,
+  Button,
+  Popover,
+  Checkbox,
+  TableRow,
+  MenuItem,
+  TableBody,
+  TableCell,
+  Container,
+  Typography,
+  IconButton,
+  TableContainer,
+  TablePagination,
+} from '@mui/material';
 // components
 import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../sections/@dashboard/products';
 // mock
@@ -41,9 +59,11 @@ export default function ProductsPage() {
             <ProductSort />
           </Stack>
         </Stack>
-
-        <ProductList products={PRODUCTS} />
-        <ProductCartWidget />
+        <>
+        asd
+        </>
+        {/* <ProductList products={PRODUCTS} />
+        <ProductCartWidget /> */}
       </Container>
     </>
   );
