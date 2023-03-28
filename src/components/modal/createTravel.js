@@ -20,22 +20,9 @@ const style = {
 };
 
 export default function AddCategory({ open, handleAddClose, render, setRender }) {
-  const [title, setChangeTitle] = useState();
-
-  const [description, setChangeDesc] = useState();
-
-  const [categoryImg, setChangeCategoryImg] = useState();
-
-  const [categoryRating, setChangeCategoryRating] = useState();
-
-  const AddCategory = async () => {
+  const AddTravel = async () => {
     try {
-      await axios.post('http://localhost:8000/category', {
-        title,
-        description,
-        categoryImg,
-        categoryRating,
-      });
+      await axios.post('http://localhost:8000/travel', {});
     } catch (err) {
       console.log('err', err);
     }
@@ -67,7 +54,6 @@ export default function AddCategory({ open, handleAddClose, render, setRender })
           <TextField
             fullWidth
             id="outlined-controlled"
-            type="file"
             label="Image"
             onChange={(e) => {
               setChangeCategoryImg(e.target.value);
