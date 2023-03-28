@@ -81,6 +81,7 @@ export default function UserPage() {
   const [categories, setCategories] = useState([]);
 
   const [category, setCategory] = useState({});
+
   const [render, setRender] = useState(false);
 
   const [page, setPage] = useState(0);
