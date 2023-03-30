@@ -64,15 +64,19 @@ export default function AddCategory({ open, handleAddClose, render, setRender })
               setChangeDesc(e.target.value);
             }}
           />
-          <TextField
-            fullWidth
-            id="outlined-controlled"
-            type="file"
-            label="Image"
-            onChange={(e) => {
-              setChangeCategoryImg(e.target.value);
-            }}
-          />
+             <TextField
+              variant="outlined"
+              type="file"
+              name="categoryImg"
+              onChange={async (e) => {
+                console.log(e.target.files[0]);
+                const imgData = new FormData();
+                imgData.append('image', e.target.files[0]);
+                const res = await axios.post('http://localhost:8000/upload', imgData);
+                console.log(res.data.imgUrl);
+                setNewCategoryObj({ ...newCategoryObj, categoryImg: res.data.imgUrl });
+              }}
+            />
           <TextField
             fullWidth
             id="outlined-controlled"
